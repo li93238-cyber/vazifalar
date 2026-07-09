@@ -671,6 +671,12 @@
       <label>Oyning nechanchi kuni</label>
       <input id="task-monthday" type="number" min="1" max="31" placeholder="masalan: 15">
     </div>
+    <div class="field admin-nav" id="assign-field" style="display:none;">
+      <label>Kimga tayinlansin</label>
+      <select id="task-assign" style="width:100%; border:none; outline:none; background:transparent; font-size:16px; color:var(--ink); font-family:inherit; padding:2px 0;">
+        <option value="">Menga (o'zim)</option>
+      </select>
+    </div>
     <div class="modal-actions">
       <button class="btn btn-secondary" onclick="closeTaskModal()" style="flex:1">Bekor qilish</button>
       <button class="btn btn-primary" onclick="saveTask()" style="flex:1.4">Qo'shish</button>
@@ -944,7 +950,18 @@ function openTaskModal(){
   document.getElementById('task-error').classList.remove('show');
   buildWeekdayPills();
   onRecurringChange();
+  if(IS_ADMIN){ populateAssignDropdown(); }
   document.getElementById('task-modal').classList.add('show');
+}
+async function populateAssignDropdown(){
+  const sel = document.getElementById('task-assign');
+  const res = await apiCall('adminListUsers', {login:CURRENT_USER});
+  sel.innerHTML = `<option value="">Menga (o'zim)</option>`;
+  if(res.ok){
+    res.users.filter(u=>u.login!==CURRENT_USER).forEach(u=>{
+      sel.innerHTML += `<option value="${escapeHtml(u.login)}">${escapeHtml(u.login)}</option>`;
+    });
+  }
 }
 function closeTaskModal(){ document.getElementById('task-modal').classList.remove('show'); }
 
@@ -972,12 +989,13 @@ async function saveTask(){
   const time = document.getElementById('task-time').value || '';
   const recurring = document.getElementById('task-recurring').value;
   const monthDay = document.getElementById('task-monthday').value || new Date(date+'T00:00:00').getDate();
+  const assignTo = IS_ADMIN ? document.getElementById('task-assign').value : '';
   const err = document.getElementById('task-error');
   if(!title){ err.textContent='Vazifa nomini kiriting'; err.classList.add('show'); return; }
 
   const res = await apiCall('addTask', {
     login:CURRENT_USER, title, desc, date, time,
-    recurring, recurWeekday:SELECTED_WEEKDAY, recurMonthDay:monthDay
+    recurring, recurWeekday:SELECTED_WEEKDAY, recurMonthDay:monthDay, assignTo
   });
   if(!res.ok){ err.textContent = res.error || 'Xatolik'; err.classList.add('show'); return; }
 
@@ -1040,6 +1058,7 @@ function taskCardHtml(t, idx){
   const timeChip = t.time ? `<span style="margin-left:8px;">\u23F0 ${t.time}</span>` : '';
   const recurChip = (t.recurring && t.recurring!=='none') ? `<span style="margin-left:8px;">${RECUR_LABEL[t.recurring]}</span>` : '';
   const overdueChip = overdue ? `<span style="margin-left:8px; color:var(--red); font-weight:700;">\u26A0 muddati o'tgan</span>` : '';
+  const assignChip = (t.assignedBy && t.assignedBy !== t.login) ? `<span style="margin-left:8px;">\uD83D\uDC64 ${escapeHtml(t.assignedBy)} tomonidan</span>` : '';
   const ICONS = {
     pending: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
     progress: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
@@ -1057,7 +1076,7 @@ function taskCardHtml(t, idx){
       ${t.desc ? `<div class="task-desc">${escapeHtml(t.desc)}</div>` : ''}
       <div class="task-meta">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        ${fmtDate(t.date)}${timeChip}${recurChip}${overdueChip}
+        ${fmtDate(t.date)}${timeChip}${recurChip}${overdueChip}${assignChip}
       </div>
       ${actions}
     </div>
