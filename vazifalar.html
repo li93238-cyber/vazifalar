@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Vazifalar</title>
+<style>
+  :root{
+    --neon:#C6FF3D;
+    --neon-ink:#0C0C0E;
+    --neon-glow:rgba(198,255,61,0.45);
+    --pink:#FF5FA8;
+    --purple:#B24BF3;
+    --blue:#6C8CFF;
+    --blue-soft:rgba(108,140,255,0.16);
+    --green:#3ED598;
+    --green-soft:rgba(62,213,152,0.16);
+    --red:#FF5F6D;
+    --red-soft:rgba(255,95,109,0.16);
+    --ink:#F5F5F7;
+    --muted:#8B8B93;
+    --muted-soft:rgba(139,139,147,0.16);
+    --card:#1A1A1F;
+    --card-2:#222228;
+    --hairline:rgba(255,255,255,0.08);
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  html,body{height:100%;}
+  body{
+    margin:0;
+    font-family:-apple-system, "SF Pro Display", "SF Pro Text", system-ui, "Segoe UI", Roboto, sans-serif;
+    color:var(--ink);
+    min-height:100vh;
+    background:#0C0C0E;
+    overflow-x:hidden;
+  }
+  .mesh{
+    position:fixed; inset:0; z-index:-1;
+    background:
+      radial-gradient(at 15% 8%, rgba(198,255,61,0.14) 0%, transparent 45%),
+      radial-gradient(at 88% 20%, rgba(178,75,243,0.16) 0%, transparent 50%),
+      radial-gradient(at 20% 95%, rgba(255,95,168,0.10) 0%, transparent 50%),
+      #0C0C0E;
+    animation: drift 26s ease-in-out infinite alternate;
+    background-size:140% 140%;
+  }
+  @keyframes drift{
+    0%{background-position:0% 0%;}
+    100%{background-position:20% 15%;}
+  }
+  .app-shell{ display:flex; min-height:100vh; }
+  .sidebar{ display:none; }
+  .stats-grid{ display:none; }
+  .phone{
+    max-width:480px;
+    margin:0 auto;
+    min-height:100vh;
+    position:relative;
+    display:flex;
+    flex-direction:column;
+    flex:1;
+  }
+  @media (min-width:620px) and (max-width:899px){
+    body{display:flex; justify-content:center; padding:28px 0;}
+    .app-shell{ display:block; }
+    .phone{
+      min-height:calc(100vh - 56px);
+      border-radius:44px;
+      overflow:hidden;
+      box-shadow:0 30px 80px rgba(0,0,0,0.5), 0 0 0 10px #000, 0 0 0 12px rgba(255,255,255,0.06);
+    }
+  }
+
+  /* ---------- Desktop dashboard (>=900px) ---------- */
+  @media (min-width:900px){
+    body{ overflow-y:auto; }
+    .sidebar{
+      display:flex; flex-direction:column;
+      width:264px; flex-shrink:0;
+      padding:28px 18px;
+      background:var(--card);
+      border-right:1px solid var(--hairline);
+      position:sticky; top:0; height:100vh;
+    }
+    .sidebar-logo{ display:flex; align-items:center; gap:10px; padding:0 10px 28px; }
+    .sidebar-logo .mark{
+      width:36px; height:36px; border-radius:11px; flex-shrink:0;
+      background:var(--neon);
+      display:flex; align-items:center; justify-content:center;
+      box-shadow:0 0 22px var(--neon-glow);
+    }
+    .sidebar-logo .name{ font-size:17px; font-weight:800; letter-spacing:-0.2px; color:var(--ink); }
+    .side-nav{ display:flex; flex-direction:column; gap:4px; flex:1; }
+    .side-item{
+      display:flex; align-items:center; gap:12px;
+      padding:11px 14px; border-radius:13px; cursor:pointer;
+      font-size:14.5px; font-weight:600; color:var(--muted);
+      border:none; background:none; width:100%; text-align:left; font-family:inherit;
+      transition:all .15s ease;
+    }
+    .side-item svg{ width:20px; height:20px; flex-shrink:0; }
+    .side-item:hover{ background:var(--card-2); }
+    .side-item.active{ background:var(--neon); color:var(--neon-ink); }
+    .side-foot{ border-top:1px solid var(--hairline); padding-top:14px; }
+    .side-profile{ display:flex; align-items:center; gap:10px; padding:8px 10px; }
+    .side-profile .avatar{ width:36px; height:36px; font-size:14px; }
+    .side-profile .info{ overflow:hidden; }
+    .side-profile .name{ font-size:13.5px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; color:var(--ink); }
+    .side-profile .role{ font-size:11.5px; color:var(--muted); }
+
+    .app-shell{ max-width:1400px; margin:0 auto; }
+    .phone{ max-width:none; }
+    .tabbar{ display:none; }
+    .fab{ position:fixed; right:40px; bottom:40px; width:64px; height:64px; left:auto; transform:none; }
+
+    .topbar{ padding:36px 40px 8px; }
+    .topbar h1{ font-size:32px; }
+    .today-card{ margin:6px 40px 10px; }
+    .filters{ padding:0 40px 16px; }
+    .task-list{ padding:0 40px 60px; display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:16px; align-content:start; }
+    .task-card{ margin-bottom:0; }
+    .settings-wrap{ padding:36px 40px 60px; max-width:640px; }
+
+    .stats-grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin:6px 40px 18px; }
+  }
+  .stat-card{
+    background:var(--card); border:1px solid var(--hairline);
+    border-radius:18px; padding:16px 18px;
+  }
+  .stat-card .v{ font-size:24px; font-weight:800; letter-spacing:-0.3px; color:var(--ink); }
+  .stat-card .l{ font-size:12.5px; color:var(--muted); font-weight:600; margin-top:2px; }
+  .stat-card.c-pending .v{ color:var(--muted); }
+  .stat-card.c-progress .v{ color:var(--blue); }
+  .stat-card.c-done .v{ color:var(--green); }
+  .stat-card.c-cancelled .v{ color:var(--red); }
+  .screen{ display:none; flex-direction:column; flex:1; min-height:100vh; }
+  .screen.active{ display:flex; }
+
+  /* ---------- Auth screens ---------- */
+  .auth-wrap{
+    flex:1; display:flex; flex-direction:column; justify-content:center;
+    padding:32px 28px 48px;
+  }
+  .auth-badge{
+    width:76px; height:76px; border-radius:22px;
+    background:var(--neon);
+    display:flex; align-items:center; justify-content:center;
+    margin:0 auto 22px;
+    box-shadow:0 0 40px var(--neon-glow);
+  }
+  .auth-title{ text-align:center; font-size:26px; font-weight:700; letter-spacing:-0.3px; margin:0 0 6px; color:var(--ink);}
+  .auth-sub{ text-align:center; color:var(--muted); font-size:15px; margin:0 0 28px;}
+  .field{
+    background:var(--card);
+    border:1px solid var(--hairline);
+    border-radius:16px;
+    padding:14px 16px;
+    margin-bottom:12px;
+  }
+  .field label{ display:block; font-size:12px; color:var(--muted); margin-bottom:2px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px;}
+  .field input, .field select{
+    width:100%; border:none; outline:none; background:transparent;
+    font-size:16px; color:var(--ink); font-family:inherit; padding:2px 0;
+  }
+  .field input::-webkit-calendar-picker-indicator{ filter:invert(1); opacity:0.6; }
+  .remember-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:4px 4px 20px;
+  }
+  .remember-left{ display:flex; align-items:center; gap:10px; }
+  .checkbox{
+    width:24px; height:24px; border-radius:8px;
+    border:1.5px solid rgba(255,255,255,0.18);
+    display:flex; align-items:center; justify-content:center;
+    background:var(--card);
+    transition:all .15s ease;
+  }
+  .checkbox.checked{ background:var(--neon); border-color:var(--neon); }
+  .checkbox svg{ width:14px; height:14px; opacity:0; transform:scale(0.5); transition:all .15s ease; }
+  .checkbox.checked svg{ opacity:1; transform:scale(1); stroke:#0C0C0E; }
+  .remember-label{ font-size:15px; color:var(--ink); }
+  .btn{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    width:100%; border:none; border-radius:16px; padding:15px;
+    font-size:16px; font-weight:700; font-family:inherit; cursor:pointer;
+    transition:transform .12s ease, opacity .12s ease;
+  }
+  .btn:active{ transform:scale(0.97); }
+  .btn-primary{ background:var(--neon); color:var(--neon-ink); box-shadow:0 10px 30px var(--neon-glow); }
+  .btn-secondary{ background:var(--card); color:var(--ink); border:1px solid var(--hairline); }
+  .btn-ghost{ background:transparent; color:var(--neon); }
+  .btn-danger{ background:var(--red-soft); color:var(--red); }
+  .link-row{ text-align:center; margin-top:18px; }
+  .link-row a{ color:var(--neon); font-size:14px; text-decoration:none; font-weight:600; cursor:pointer;}
+  .error-msg{
+    background:var(--red-soft); color:var(--red); font-size:13px; font-weight:600;
+    padding:10px 14px; border-radius:12px; margin-bottom:12px; display:none;
+  }
+  .error-msg.show{ display:block; }
+
+  /* ---------- Main app ---------- */
+  .topbar{
+    padding:18px 20px 10px;
+    display:flex; align-items:flex-end; justify-content:space-between;
+  }
+  .topbar h1{ font-size:30px; font-weight:800; letter-spacing:-0.5px; margin:0; color:var(--ink); }
+  .topbar .date{ color:var(--muted); font-size:14px; font-weight:500; margin-top:2px; }
+
+  .today-card{
+    margin:6px 20px 18px;
+    background:linear-gradient(135deg, #1F2417, var(--card) 55%);
+    border:1px solid rgba(198,255,61,0.22);
+    border-radius:24px;
+    padding:18px 20px;
+    display:flex; align-items:center; gap:18px;
+    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+  }
+  .ring-wrap{ position:relative; width:64px; height:64px; flex-shrink:0; }
+  .ring-wrap svg{ transform:rotate(-90deg); }
+  .ring-pct{
+    position:absolute; inset:0; display:flex; align-items:center; justify-content:center;
+    font-size:15px; font-weight:700; color:var(--ink);
+  }
+  .today-info .t1{ font-size:15px; font-weight:700; margin-bottom:2px; color:var(--ink); }
+  .today-info .t2{ font-size:13px; color:var(--muted); }
+
+  .filters{
+    display:flex; gap:8px; padding:0 20px 14px; overflow-x:auto;
+    scrollbar-width:none;
+  }
+  .filters::-webkit-scrollbar{ display:none; }
+  .pill{
+    flex:0 0 auto;
+    padding:8px 15px;
+    border-radius:999px;
+    font-size:13px; font-weight:600;
+    background:var(--card);
+    border:1px solid var(--hairline);
+    color:var(--muted);
+    cursor:pointer;
+    white-space:nowrap;
+    transition:all .15s ease;
+  }
+  .pill.active{ background:var(--neon); color:var(--neon-ink); border-color:var(--neon); }
+
+  .task-list{ flex:1; padding:0 20px 130px; overflow-y:auto; }
+  .task-card{
+    background:var(--card);
+    border:1px solid var(--hairline);
+    border-radius:20px;
+    padding:16px 18px;
+    margin-bottom:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.25);
+    animation: rise .32s ease both;
+    display:flex; gap:14px;
+  }
+  @keyframes rise{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .task-icon{
+    width:42px; height:42px; border-radius:13px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .task-icon.i-pending{ background:var(--muted-soft); color:var(--muted); }
+  .task-icon.i-progress{ background:var(--blue-soft); color:var(--blue); }
+  .task-icon.i-done{ background:var(--green-soft); color:var(--green); }
+  .task-icon.i-cancelled{ background:var(--red-soft); color:var(--red); }
+  .task-body{ flex:1; min-width:0; }
+  .task-head{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; }
+  .task-title{ font-size:16px; font-weight:700; line-height:1.3; color:var(--ink); }
+  .task-title.done{ text-decoration:line-through; color:var(--muted); }
+  .badge{
+    flex-shrink:0; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px;
+  }
+  .badge-pending{ background:var(--muted-soft); color:var(--muted); }
+  .badge-progress{ background:var(--blue-soft); color:var(--blue); }
+  .badge-done{ background:var(--green-soft); color:var(--green); }
+  .badge-cancelled{ background:var(--red-soft); color:var(--red); }
+  .task-desc{ font-size:13.5px; color:var(--muted); margin-top:6px; line-height:1.4; }
+  .task-meta{ display:flex; align-items:center; gap:6px; margin-top:10px; font-size:12.5px; color:var(--muted); font-weight:600;}
+  .task-actions{ display:flex; gap:8px; margin-top:12px; }
+  .task-actions button{
+    flex:1; border:none; border-radius:12px; padding:10px; font-size:13.5px; font-weight:700;
+    font-family:inherit; cursor:pointer; transition:transform .12s ease;
+  }
+  .task-actions button:active{ transform:scale(0.95); }
+  .act-accept{ background:var(--neon); color:var(--neon-ink); }
+  .act-done{ background:var(--green); color:#06231A; }
+  .act-cancel{ background:var(--red-soft); color:var(--red); }
+  .act-delete{ background:var(--muted-soft); color:var(--muted); }
+
+  .empty{
+    text-align:center; padding:60px 20px; color:var(--muted);
+  }
+  .empty .icon{ margin-bottom:14px; opacity:0.5; }
+  .empty p{ margin:0; font-size:14.5px; }
+
+  .fab{
+    position:absolute; left:50%; bottom:86px; transform:translateX(-50%);
+    width:58px; height:58px; border-radius:50%;
+    background:var(--neon);
+    display:flex; align-items:center; justify-content:center;
+    border:none; cursor:pointer;
+    box-shadow:0 0 0 6px #0C0C0E, 0 0 34px var(--neon-glow);
+    transition:transform .12s ease;
+    z-index:5;
+  }
+  .fab:active{ transform:translateX(-50%) scale(0.92); }
+  .fab svg path{ stroke:#0C0C0E; }
+
+  .tabbar{
+    position:sticky; bottom:0; left:0; right:0;
+    background:var(--card);
+    border-top:1px solid var(--hairline);
+    display:flex; align-items:center;
+    padding:10px 18px calc(10px + env(safe-area-inset-bottom));
+  }
+  .tab{
+    flex:1; display:flex; flex-direction:column; align-items:center; gap:3px;
+    background:none; border:none; cursor:pointer; color:var(--muted);
+    font-family:inherit; font-size:11px; font-weight:600; padding:4px;
+  }
+  .tab.active{ color:var(--neon); }
+  .tab svg{ width:24px; height:24px; }
+
+  /* Settings screen */
+  .settings-wrap{ flex:1; padding:18px 20px 110px; overflow-y:auto; }
+  .profile-card{
+    display:flex; align-items:center; gap:14px;
+    background:var(--card); border:1px solid var(--hairline);
+    border-radius:20px; padding:18px; margin-bottom:20px;
+  }
+  .avatar{
+    width:52px; height:52px; border-radius:50%;
+    background:var(--neon);
+    display:flex; align-items:center; justify-content:center;
+    color:#0C0C0E; font-weight:800; font-size:20px; flex-shrink:0;
+  }
+  .profile-name{ font-size:16px; font-weight:700; color:var(--ink); }
+  .profile-sub{ font-size:13px; color:var(--muted); }
+  .section-label{ font-size:12px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:0.4px; margin:18px 4px 8px; }
+  .settings-group{
+    background:var(--card); border:1px solid var(--hairline);
+    border-radius:18px; overflow:hidden;
+  }
+  .settings-row{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:15px 16px; border-bottom:1px solid var(--hairline);
+    cursor:pointer; font-size:15px; font-weight:500; color:var(--ink);
+  }
+  .settings-row:last-child{ border-bottom:none; }
+  .settings-row .chev{ color:var(--muted); }
+  .settings-row.danger{ color:var(--red); font-weight:600; }
+
+  /* Modal */
+  .modal-backdrop{
+    position:fixed; inset:0; background:rgba(0,0,0,0.6);
+    display:none; align-items:flex-end; justify-content:center; z-index:50;
+  }
+  .modal-backdrop.show{ display:flex; }
+  .modal{
+    width:100%; max-width:480px;
+    background:#161619;
+    border:1px solid var(--hairline);
+    border-radius:26px 26px 0 0;
+    padding:20px 20px calc(24px + env(safe-area-inset-bottom));
+    animation: slideUp .28s cubic-bezier(.2,.9,.3,1) both;
+    max-height:88vh; overflow-y:auto;
+  }
+  @keyframes slideUp{ from{ transform:translateY(100%);} to{ transform:translateY(0);} }
+  .modal-handle{ width:36px; height:5px; border-radius:3px; background:rgba(255,255,255,0.18); margin:0 auto 16px; }
+  .modal h2{ font-size:19px; font-weight:800; margin:0 0 16px; color:var(--ink); }
+  .modal-actions{ display:flex; gap:10px; margin-top:6px; }
+
+  .toast{
+    position:fixed; left:50%; top:24px; transform:translateX(-50%) translateY(-140%);
+    background:var(--neon); color:#0C0C0E; font-size:14px; font-weight:700;
+    padding:12px 20px; border-radius:14px; z-index:100; transition:transform .3s cubic-bezier(.2,.9,.3,1);
+    max-width:85%; text-align:center; box-shadow:0 10px 30px var(--neon-glow);
+  }
+  .toast.show{ transform:translateX(-50%) translateY(0); }
+</style>
+</head>
+<body>
+<div class="mesh"></div>
+<div class="app-shell">
+<nav class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="mark"><svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4.5-4.5" stroke="#0C0C0E" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="name">Vazifalar</div>
+  </div>
+  <div class="side-nav">
+    <button class="side-item active" data-tab="main" onclick="switchTab('main')">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4.5-4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" stroke-width="2"/></svg>
+      Vazifalar
+    </button>
+    <button class="side-item" data-tab="settings" onclick="switchTab('settings')">
+      <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.6 7.6 0 001.7 1l.4 2.5h4l.4-2.5a7.6 7.6 0 001.7-1l2.3.9 2-3.4-2-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+      Sozlamalar
+    </button>
+  </div>
+  <div class="side-foot">
+    <div class="side-profile">
+      <div class="avatar" id="side-avatar-letter">V</div>
+      <div class="info">
+        <div class="name" id="side-profile-name">-</div>
+        <div class="role">Faol hisob</div>
+      </div>
+    </div>
+  </div>
+</nav>
+<div class="phone">
+
+  <!-- SETUP (first run) -->
+  <div class="screen" id="screen-setup">
+    <div class="auth-wrap">
+      <div class="auth-badge">
+        <svg width="34" height="34" viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4.5-4.5" stroke="#0C0C0E" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3" y="3" width="18" height="18" rx="6" stroke="#0C0C0E" stroke-width="0" fill="none"/></svg>
+      </div>
+      <h1 class="auth-title">Xush kelibsiz</h1>
+      <p class="auth-sub">Kirish uchun login va parol o'rnating</p>
+      <div id="setup-error" class="error-msg"></div>
+      <div class="field"><label>Login</label><input id="setup-login" type="text" autocomplete="off" placeholder="masalan: venom"></div>
+      <div class="field"><label>Parol</label><input id="setup-pass" type="password" autocomplete="new-password" placeholder="Parol o'ylab toping"></div>
+      <div class="field"><label>Parolni tasdiqlang</label><input id="setup-pass2" type="password" autocomplete="new-password" placeholder="Parolni qayta kiriting"></div>
+      <button class="btn btn-primary" onclick="doSetup()">Hisob yaratish</button>
+      <div class="link-row"><a onclick="showScreen('screen-login')">Hisobingiz bormi? Kirish</a></div>
+    </div>
+  </div>
+
+  <!-- LOGIN -->
+  <div class="screen" id="screen-login">
+    <div class="auth-wrap">
+      <div class="auth-badge">
+        <svg width="30" height="30" viewBox="0 0 24 24" fill="none"><rect x="5" y="10" width="14" height="10" rx="2.5" stroke="#0C0C0E" stroke-width="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3" stroke="#0C0C0E" stroke-width="2" stroke-linecap="round"/></svg>
+      </div>
+      <h1 class="auth-title">Kirish</h1>
+      <p class="auth-sub" id="login-sub">Davom etish uchun tizimga kiring</p>
+      <div id="login-error" class="error-msg"></div>
+      <div class="field"><label>Login</label><input id="login-login" type="text" autocomplete="username" placeholder="Login"></div>
+      <div class="field"><label>Parol</label><input id="login-pass" type="password" autocomplete="current-password" placeholder="Parol"></div>
+      <div class="remember-row">
+        <div class="remember-left" onclick="toggleRemember()">
+          <div class="checkbox" id="remember-box">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 12l5 5L20 6" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+          <span class="remember-label">Login va parolni eslab qolish</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="doLogin()">Kirish</button>
+      <div class="link-row"><a onclick="showScreen('screen-setup')">Hisobingiz yo'qmi? Ro'yxatdan o'tish</a></div>
+    </div>
+  </div>
+
+  <!-- MAIN: TASKS -->
+  <div class="screen" id="screen-main">
+    <div class="topbar">
+      <div>
+        <h1>Vazifalar</h1>
+        <div class="date" id="today-label"></div>
+      </div>
+    </div>
+
+    <div class="stats-grid" id="stats-grid">
+      <div class="stat-card c-pending"><div class="v" id="stat-pending">0</div><div class="l">Yangi</div></div>
+      <div class="stat-card c-progress"><div class="v" id="stat-progress">0</div><div class="l">Jarayonda</div></div>
+      <div class="stat-card c-done"><div class="v" id="stat-done">0</div><div class="l">Bajarildi</div></div>
+      <div class="stat-card c-cancelled"><div class="v" id="stat-cancelled">0</div><div class="l">Bekor qilingan</div></div>
+    </div>
+
+    <div class="today-card">
+      <div class="ring-wrap">
+        <svg width="64" height="64">
+          <circle cx="32" cy="32" r="27" stroke="rgba(255,255,255,0.08)" stroke-width="7" fill="none"/>
+          <circle id="ring-progress" cx="32" cy="32" r="27" stroke="#C6FF3D" stroke-width="7" fill="none" stroke-linecap="round" stroke-dasharray="169.6" stroke-dashoffset="169.6"/>
+        </svg>
+        <div class="ring-pct" id="ring-pct">0%</div>
+      </div>
+      <div class="today-info">
+        <div class="t1" id="today-t1">Bugun vazifa yo'q</div>
+        <div class="t2" id="today-t2">Yangi vazifa qo'shing</div>
+      </div>
+    </div>
+
+    <div class="filters" id="filters">
+      <div class="pill active" data-f="all">Barchasi</div>
+      <div class="pill" data-f="pending">Yangi</div>
+      <div class="pill" data-f="progress">Jarayonda</div>
+      <div class="pill" data-f="done">Bajarildi</div>
+      <div class="pill" data-f="cancelled">Bekor qilingan</div>
+    </div>
+
+    <div class="task-list" id="task-list"></div>
+
+    <button class="fab" onclick="openTaskModal()">
+      <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
+    </button>
+
+    <div class="tabbar">
+      <button class="tab active" data-tab="main" onclick="switchTab('main')">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4.5-4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" stroke-width="2"/></svg>
+        Vazifalar
+      </button>
+      <button class="tab" data-tab="settings" onclick="switchTab('settings')">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.6 7.6 0 001.7 1l.4 2.5h4l.4-2.5a7.6 7.6 0 001.7-1l2.3.9 2-3.4-2-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Sozlamalar
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN: SETTINGS -->
+  <div class="screen" id="screen-settings">
+    <div class="topbar"><div><h1>Sozlamalar</h1></div></div>
+    <div class="settings-wrap">
+      <div class="profile-card">
+        <div class="avatar" id="avatar-letter">V</div>
+        <div>
+          <div class="profile-name" id="profile-name">-</div>
+          <div class="profile-sub">Faol hisob</div>
+        </div>
+      </div>
+
+      <div class="section-label">Hisob</div>
+      <div class="settings-group">
+        <div class="settings-row" onclick="openChangePass()">
+          <span>Parolni o'zgartirish</span>
+          <span class="chev">›</span>
+        </div>
+        <div class="settings-row" onclick="toggleRememberSetting()">
+          <span>Login va parolni eslab qolish</span>
+          <span class="chev" id="settings-remember-state">Yoqilgan ›</span>
+        </div>
+        <div class="settings-row" onclick="connectTelegram()">
+          <span>Telegram bot orqali eslatish</span>
+          <span class="chev" id="settings-telegram-state">Ulash ›</span>
+        </div>
+      </div>
+
+      <div class="section-label">Hisob</div>
+      <div class="settings-group">
+        <div class="settings-row danger" onclick="doLogout()">
+          <span>Chiqish</span>
+        </div>
+      </div>
+    </div>
+    <div class="tabbar">
+      <button class="tab" data-tab="main" onclick="switchTab('main')">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4.5-4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" stroke-width="2"/></svg>
+        Vazifalar
+      </button>
+      <button class="tab active" data-tab="settings" onclick="switchTab('settings')">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.6 7.6 0 001.7 1l.4 2.5h4l.4-2.5a7.6 7.6 0 001.7-1l2.3.9 2-3.4-2-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Sozlamalar
+      </button>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Add task modal -->
+<div class="modal-backdrop" id="task-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>Yangi vazifa</h2>
+    <div id="task-error" class="error-msg"></div>
+    <div class="field"><label>Nomi</label><input id="task-title" type="text" placeholder="Vazifa nomini kiriting"></div>
+    <div class="field"><label>Izoh (ixtiyoriy)</label><input id="task-desc" type="text" placeholder="Qo'shimcha ma'lumot"></div>
+    <div class="field"><label>Bajarish sanasi</label><input id="task-date" type="date"></div>
+    <div class="field"><label>Eslatma vaqti (ixtiyoriy)</label><input id="task-time" type="time"></div>
+    <div class="field">
+      <label>Takrorlanish</label>
+      <select id="task-recurring" onchange="onRecurringChange()" style="width:100%; border:none; outline:none; background:transparent; font-size:16px; color:var(--ink); font-family:inherit; padding:2px 0;">
+        <option value="none">Yo'q</option>
+        <option value="weekly">Har hafta</option>
+        <option value="monthly">Har oy</option>
+      </select>
+    </div>
+    <div class="field" id="weekday-field" style="display:none;">
+      <label>Hafta kuni</label>
+      <div id="weekday-pills" style="display:flex; gap:6px; flex-wrap:wrap; padding-top:4px;"></div>
+    </div>
+    <div class="field" id="monthday-field" style="display:none;">
+      <label>Oyning nechanchi kuni</label>
+      <input id="task-monthday" type="number" min="1" max="31" placeholder="masalan: 15">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeTaskModal()" style="flex:1">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="saveTask()" style="flex:1.4">Qo'shish</button>
+    </div>
+  </div>
+</div>
+
+<!-- Change password modal -->
+<div class="modal-backdrop" id="pass-modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <h2>Parolni o'zgartirish</h2>
+    <div id="pass-error" class="error-msg"></div>
+    <div class="field"><label>Joriy parol</label><input id="pass-old" type="password"></div>
+    <div class="field"><label>Yangi parol</label><input id="pass-new" type="password"></div>
+    <div class="field"><label>Yangi parolni tasdiqlang</label><input id="pass-new2" type="password"></div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeChangePass()" style="flex:1">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="savePassword()" style="flex:1.4">Saqlash</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ---------------- Backend config ---------------- */
+// Google Apps Script Web App URL manzilini shu yerga qo'ying (Code.gs ni deploy qilgandan keyin)
+const APP_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzjxc9Xv-2yKCJeXO8rpzT1nmLQf-ukIYQcJWXfsqO6zYK00tv4Y-8R5gRXBWowAVDG/exec';
+// Telegram bot username (@ belgisisiz), Sozlamalar bo'limidagi "Ulash" tugmasi uchun
+const BOT_USERNAME = 'ivazifalar_bot';
+
+async function apiCall(action, payload){
+  try{
+    const res = await fetch(APP_SCRIPT_URL, {
+      method:'POST',
+      headers:{'Content-Type':'text/plain;charset=utf-8'},
+      body: JSON.stringify(Object.assign({action}, payload||{}))
+    });
+    return await res.json();
+  }catch(e){
+    return {ok:false, error:'Serverga ulanib bo\'lmadi. Internetni tekshiring.'};
+  }
+}
+
+/* ---------------- Local (device) session helpers ---------------- */
+async function storeGet(key){
+  try{ const r = await window.storage.get(key, false); return r ? r.value : null; }
+  catch(e){ return null; }
+}
+async function storeSet(key, value){
+  try{ await window.storage.set(key, value, false); return true; }
+  catch(e){ return false; }
+}
+async function storeDelete(key){
+  try{ await window.storage.delete(key, false); return true; }
+  catch(e){ return false; }
+}
+
+/* ---------------- State ---------------- */
+let CURRENT_USER = null;
+let TASKS = [];
+let ACTIVE_FILTER = 'all';
+let REMEMBER_CHECKED = true;
+let SELECTED_WEEKDAY = new Date().getDay();
+
+const STATUS_LABEL = {
+  pending:'Yangi', progress:'Jarayonda', done:'Bajarildi', cancelled:'Bekor qilingan'
+};
+const WEEKDAY_LABELS = ['Yak','Dush','Sesh','Chor','Pay','Juma','Shan'];
+const RECUR_LABEL = { none:'', weekly:'\uD83D\uDD01 Har hafta', monthly:'\uD83D\uDD01 Har oy' };
+
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function todayStr(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+function fmtDate(str){
+  if(!str) return '';
+  const d = new Date(str+'T00:00:00');
+  const months=['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
+  return d.getDate()+' '+months[d.getMonth()];
+}
+
+/* ---------------- Init / boot ---------------- */
+async function boot(){
+  document.getElementById('today-label').textContent = new Date().toLocaleDateString('uz-UZ',{weekday:'long', day:'numeric', month:'long'});
+  document.getElementById('task-date').value = todayStr();
+
+  const sessionRaw = await storeGet('auth:session');
+  if(sessionRaw){
+    try{
+      const s = JSON.parse(sessionRaw);
+      const res = await apiCall('login', {login:s.login, password:s.password});
+      if(res.ok){
+        document.getElementById('login-login').value = s.login;
+        document.getElementById('login-pass').value = s.password;
+        await enterApp(s.login, res.hasTelegram);
+        return;
+      }
+    }catch(e){}
+  }
+  showScreen('screen-login');
+}
+
+/* ---------------- Setup / Login ---------------- */
+async function doSetup(){
+  const login = document.getElementById('setup-login').value.trim();
+  const pass = document.getElementById('setup-pass').value;
+  const pass2 = document.getElementById('setup-pass2').value;
+  const err = document.getElementById('setup-error');
+  err.classList.remove('show');
+
+  if(!login || !pass){ err.textContent='Login va parolni kiriting'; err.classList.add('show'); return; }
+  if(pass.length < 4){ err.textContent='Parol kamida 4 belgidan iborat bo\'lsin'; err.classList.add('show'); return; }
+  if(pass !== pass2){ err.textContent='Parollar mos emas'; err.classList.add('show'); return; }
+
+  const res = await apiCall('signup', {login, password:pass});
+  if(!res.ok){ err.textContent = res.error || 'Xatolik yuz berdi'; err.classList.add('show'); return; }
+
+  await storeSet('auth:session', JSON.stringify({login, password:pass}));
+  toast('Hisob yaratildi');
+  await enterApp(login, false);
+}
+
+async function doLogin(){
+  const login = document.getElementById('login-login').value.trim();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-error');
+  err.classList.remove('show');
+
+  if(!login || !pass){ err.textContent='Login va parolni kiriting'; err.classList.add('show'); return; }
+
+  const res = await apiCall('login', {login, password:pass});
+  if(!res.ok){
+    err.textContent = res.error || 'Login yoki parol noto\'g\'ri';
+    err.classList.add('show');
+    return;
+  }
+
+  if(REMEMBER_CHECKED){
+    await storeSet('auth:session', JSON.stringify({login, password:pass}));
+  } else {
+    await storeDelete('auth:session');
+  }
+  await apiCall('setRemember', {login, remembered:REMEMBER_CHECKED});
+  await enterApp(login, res.hasTelegram);
+}
+
+function toggleRemember(){
+  REMEMBER_CHECKED = !REMEMBER_CHECKED;
+  document.getElementById('remember-box').classList.toggle('checked', REMEMBER_CHECKED);
+}
+
+async function doLogout(){
+  await storeDelete('auth:session');
+  document.getElementById('login-login').value='';
+  document.getElementById('login-pass').value='';
+  showScreen('screen-login');
+}
+
+/* ---------------- App entry ---------------- */
+async function enterApp(login, hasTelegram){
+  CURRENT_USER = login;
+  document.getElementById('profile-name').textContent = login;
+  document.getElementById('avatar-letter').textContent = login.charAt(0).toUpperCase();
+  document.getElementById('side-profile-name').textContent = login;
+  document.getElementById('side-avatar-letter').textContent = login.charAt(0).toUpperCase();
+  updateTelegramState(hasTelegram);
+  await loadTasks();
+  renderTasks();
+  showScreen('screen-main');
+  switchTab('main');
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  document.querySelectorAll('.side-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
+  if(tab==='main'){ showScreen('screen-main'); }
+  else { showScreen('screen-settings'); refreshRememberSetting(); }
+}
+
+async function refreshRememberSetting(){
+  document.getElementById('settings-remember-state').textContent = REMEMBER_CHECKED ? 'Yoqilgan \u203a' : "O'chirilgan \u203a";
+}
+async function toggleRememberSetting(){
+  REMEMBER_CHECKED = !REMEMBER_CHECKED;
+  await apiCall('setRemember', {login:CURRENT_USER, remembered:REMEMBER_CHECKED});
+  if(REMEMBER_CHECKED){
+    const pass = document.getElementById('login-pass').value;
+    await storeSet('auth:session', JSON.stringify({login:CURRENT_USER, password:pass}));
+  } else {
+    await storeDelete('auth:session');
+  }
+  refreshRememberSetting();
+  toast(REMEMBER_CHECKED ? 'Eslab qolish yoqildi' : "Eslab qolish o'chirildi");
+}
+
+function updateTelegramState(hasTelegram){
+  document.getElementById('settings-telegram-state').textContent = hasTelegram ? 'Ulangan \u203a' : 'Ulash \u203a';
+}
+function connectTelegram(){
+  if(!BOT_USERNAME || BOT_USERNAME.indexOf('PUT_YOUR') === 0){
+    toast('Bot hali sozlanmagan. Code.gs va BOT_USERNAME ni tekshiring.');
+    return;
+  }
+  const url = 'https://t.me/'+BOT_USERNAME+'?start='+encodeURIComponent(CURRENT_USER);
+  window.open(url, '_blank');
+  toast('Telegramda /start tugmasini bosing, ulanadi');
+}
+
+/* ---------------- Change password ---------------- */
+function openChangePass(){
+  document.getElementById('pass-old').value='';
+  document.getElementById('pass-new').value='';
+  document.getElementById('pass-new2').value='';
+  document.getElementById('pass-error').classList.remove('show');
+  document.getElementById('pass-modal').classList.add('show');
+}
+function closeChangePass(){ document.getElementById('pass-modal').classList.remove('show'); }
+
+async function savePassword(){
+  const oldp = document.getElementById('pass-old').value;
+  const newp = document.getElementById('pass-new').value;
+  const newp2 = document.getElementById('pass-new2').value;
+  const err = document.getElementById('pass-error');
+  err.classList.remove('show');
+
+  if(newp.length < 4){ err.textContent='Yangi parol kamida 4 belgidan iborat bo\'lsin'; err.classList.add('show'); return; }
+  if(newp !== newp2){ err.textContent='Yangi parollar mos emas'; err.classList.add('show'); return; }
+
+  const res = await apiCall('changePassword', {login:CURRENT_USER, oldPassword:oldp, newPassword:newp});
+  if(!res.ok){ err.textContent = res.error || 'Xatolik'; err.classList.add('show'); return; }
+
+  if(REMEMBER_CHECKED){
+    await storeSet('auth:session', JSON.stringify({login:CURRENT_USER, password:newp}));
+  }
+  closeChangePass();
+  toast('Parol muvaffaqiyatli o\'zgartirildi');
+}
+
+/* ---------------- Tasks ---------------- */
+async function loadTasks(){
+  const res = await apiCall('getTasks', {login:CURRENT_USER});
+  TASKS = res.ok ? res.tasks : [];
+}
+
+function openTaskModal(){
+  document.getElementById('task-title').value='';
+  document.getElementById('task-desc').value='';
+  document.getElementById('task-date').value=todayStr();
+  document.getElementById('task-time').value='';
+  document.getElementById('task-recurring').value='none';
+  document.getElementById('task-monthday').value = new Date().getDate();
+  document.getElementById('task-error').classList.remove('show');
+  buildWeekdayPills();
+  onRecurringChange();
+  document.getElementById('task-modal').classList.add('show');
+}
+function closeTaskModal(){ document.getElementById('task-modal').classList.remove('show'); }
+
+function buildWeekdayPills(){
+  SELECTED_WEEKDAY = new Date().getDay();
+  const wrap = document.getElementById('weekday-pills');
+  wrap.innerHTML = WEEKDAY_LABELS.map((l,i)=>
+    `<div class="pill${i===SELECTED_WEEKDAY?' active':''}" data-day="${i}" onclick="pickWeekday(${i})" style="margin:0;">${l}</div>`
+  ).join('');
+}
+function pickWeekday(i){
+  SELECTED_WEEKDAY = i;
+  document.querySelectorAll('#weekday-pills .pill').forEach(p=>p.classList.toggle('active', Number(p.dataset.day)===i));
+}
+function onRecurringChange(){
+  const val = document.getElementById('task-recurring').value;
+  document.getElementById('weekday-field').style.display = val==='weekly' ? 'block' : 'none';
+  document.getElementById('monthday-field').style.display = val==='monthly' ? 'block' : 'none';
+}
+
+async function saveTask(){
+  const title = document.getElementById('task-title').value.trim();
+  const desc = document.getElementById('task-desc').value.trim();
+  const date = document.getElementById('task-date').value || todayStr();
+  const time = document.getElementById('task-time').value || '';
+  const recurring = document.getElementById('task-recurring').value;
+  const monthDay = document.getElementById('task-monthday').value || new Date(date+'T00:00:00').getDate();
+  const err = document.getElementById('task-error');
+  if(!title){ err.textContent='Vazifa nomini kiriting'; err.classList.add('show'); return; }
+
+  const res = await apiCall('addTask', {
+    login:CURRENT_USER, title, desc, date, time,
+    recurring, recurWeekday:SELECTED_WEEKDAY, recurMonthDay:monthDay
+  });
+  if(!res.ok){ err.textContent = res.error || 'Xatolik'; err.classList.add('show'); return; }
+
+  closeTaskModal();
+  await loadTasks();
+  renderTasks();
+  toast('Vazifa qo\'shildi');
+}
+
+async function acceptTask(id){
+  await apiCall('updateStatus', {taskId:id, status:'progress'});
+  await loadTasks(); renderTasks();
+  toast('Vazifa jarayonga o\'tdi');
+}
+async function completeTask(id){
+  const res = await apiCall('updateStatus', {taskId:id, status:'done'});
+  await loadTasks(); renderTasks();
+  toast(res.newTask ? 'Bajarildi! Keyingi davr uchun yangi vazifa yaratildi' : 'Vazifa bajarildi');
+}
+async function cancelTask(id){
+  await apiCall('updateStatus', {taskId:id, status:'cancelled'});
+  await loadTasks(); renderTasks();
+  toast('Vazifa bekor qilindi');
+}
+async function deleteTask(id){
+  await apiCall('deleteTask', {taskId:id});
+  await loadTasks(); renderTasks();
+  toast('Vazifa o\'chirildi');
+}
+
+document.getElementById('filters').addEventListener('click', (e)=>{
+  const pill = e.target.closest('.pill');
+  if(!pill) return;
+  document.querySelectorAll('#filters .pill').forEach(p=>p.classList.remove('active'));
+  pill.classList.add('active');
+  ACTIVE_FILTER = pill.dataset.f;
+  renderTasks();
+});
+
+function taskCardHtml(t){
+  const badgeClass = 'badge-'+t.status;
+  let actions = '';
+  if(t.status==='pending'){
+    actions = `<div class="task-actions">
+      <button class="act-accept" onclick="acceptTask('${t.id}')">Qabul qilish</button>
+      <button class="act-cancel" onclick="cancelTask('${t.id}')">Bekor qilish</button>
+    </div>`;
+  } else if(t.status==='progress'){
+    actions = `<div class="task-actions">
+      <button class="act-done" onclick="completeTask('${t.id}')">Bajarildi</button>
+      <button class="act-cancel" onclick="cancelTask('${t.id}')">Bekor qilish</button>
+    </div>`;
+  } else {
+    actions = `<div class="task-actions">
+      <button class="act-delete" onclick="deleteTask('${t.id}')">O'chirish</button>
+    </div>`;
+  }
+  const titleClass = t.status==='done' ? 'task-title done' : 'task-title';
+  const timeChip = t.time ? `<span style="margin-left:8px;">\u23F0 ${t.time}</span>` : '';
+  const recurChip = (t.recurring && t.recurring!=='none') ? `<span style="margin-left:8px;">${RECUR_LABEL[t.recurring]}</span>` : '';
+  const ICONS = {
+    pending: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
+    progress: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
+    done: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
+    cancelled: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
+  };
+  return `<div class="task-card">
+    <div class="task-icon i-${t.status}">${ICONS[t.status]}</div>
+    <div class="task-body">
+      <div class="task-head">
+        <div class="${titleClass}">${escapeHtml(t.title)}</div>
+        <div class="badge ${badgeClass}">${STATUS_LABEL[t.status]}</div>
+      </div>
+      ${t.desc ? `<div class="task-desc">${escapeHtml(t.desc)}</div>` : ''}
+      <div class="task-meta">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        ${fmtDate(t.date)}${timeChip}${recurChip}
+      </div>
+      ${actions}
+    </div>
+  </div>`;
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderTasks(){
+  const list = document.getElementById('task-list');
+  let filtered = TASKS;
+  if(ACTIVE_FILTER !== 'all'){
+    filtered = TASKS.filter(t=>t.status===ACTIVE_FILTER);
+  }
+  if(filtered.length===0){
+    list.innerHTML = `<div class="empty">
+      <div class="icon"><svg width="46" height="46" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="#8E8E93" stroke-width="1.6"/><path d="M9 12.5l2 2 4.5-4.5" stroke="#8E8E93" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+      <p>Bu bo'limda vazifalar yo'q</p>
+    </div>`;
+  } else {
+    list.innerHTML = filtered.map(taskCardHtml).join('');
+  }
+
+  document.getElementById('stat-pending').textContent = TASKS.filter(t=>t.status==='pending').length;
+  document.getElementById('stat-progress').textContent = TASKS.filter(t=>t.status==='progress').length;
+  document.getElementById('stat-done').textContent = TASKS.filter(t=>t.status==='done').length;
+  document.getElementById('stat-cancelled').textContent = TASKS.filter(t=>t.status==='cancelled').length;
+
+  const today = todayStr();
+  const todays = TASKS.filter(t=>t.date===today);
+  const doneToday = todays.filter(t=>t.status==='done').length;
+  const pct = todays.length ? Math.round((doneToday/todays.length)*100) : 0;
+  const circumference = 169.6;
+  const offset = circumference - (circumference*pct/100);
+  document.getElementById('ring-progress').style.strokeDashoffset = offset;
+  document.getElementById('ring-pct').textContent = pct+'%';
+  if(todays.length===0){
+    document.getElementById('today-t1').textContent = "Bugun vazifa yo'q";
+    document.getElementById('today-t2').textContent = 'Yangi vazifa qo\'shing';
+  } else {
+    document.getElementById('today-t1').textContent = `Bugun ${todays.length} ta vazifa`;
+    document.getElementById('today-t2').textContent = `${doneToday} tasi bajarildi`;
+  }
+}
+
+boot();
+</script>
+</body>
+</html>
