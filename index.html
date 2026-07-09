@@ -27,7 +27,40 @@
     --card-2:#222228;
     --hairline:rgba(255,255,255,0.08);
   }
-  *{box-sizing:border-box; -webkit-tap-highlight-color:transparent;}
+  body.theme-light{
+    --neon:#5EA810;
+    --neon-ink:#FFFFFF;
+    --neon-glow:rgba(94,168,16,0.28);
+    --pink:#E0459A;
+    --purple:#9B3AD1;
+    --blue:#3D63E0;
+    --blue-soft:rgba(61,99,224,0.10);
+    --green:#1E9E67;
+    --green-soft:rgba(30,158,103,0.12);
+    --red:#E0333F;
+    --red-soft:rgba(224,51,63,0.10);
+    --ink:#15181C;
+    --muted:#6C7580;
+    --muted-soft:rgba(108,117,128,0.10);
+    --card:#FFFFFF;
+    --card-2:#F3F6F1;
+    --hairline:rgba(20,20,20,0.08);
+    background:#F4F7F2;
+  }
+  body.theme-light .mesh{
+    background:
+      radial-gradient(at 15% 8%, rgba(94,168,16,0.10) 0%, transparent 45%),
+      radial-gradient(at 88% 20%, rgba(155,58,209,0.06) 0%, transparent 50%),
+      radial-gradient(at 20% 95%, rgba(224,69,154,0.05) 0%, transparent 50%),
+      #F4F7F2;
+  }
+  body.theme-light .checkbox.checked svg{ stroke:#fff; }
+  body.theme-light .fab svg path{ stroke:#fff; }
+  body.theme-light .toast{ color:#fff; }
+  body.theme-light .act-accept{ color:#fff; }
+  body.theme-light .auth-badge svg path, body.theme-light .auth-badge svg rect{ stroke:#fff; }
+  body.theme-light .sidebar-logo .mark svg path{ stroke:#fff; }
+  body.theme-light .avatar{ color:#fff; }
   html,body{height:100%;}
   body{
     margin:0;
@@ -78,13 +111,14 @@
   @media (min-width:900px){
     body{ overflow-y:auto; }
     .sidebar{
-      display:flex; flex-direction:column;
+      display:none; flex-direction:column;
       width:264px; flex-shrink:0;
       padding:28px 18px;
       background:var(--card);
       border-right:1px solid var(--hairline);
       position:sticky; top:0; height:100vh;
     }
+    body.authed .sidebar{ display:flex; }
     .sidebar-logo{ display:flex; align-items:center; gap:10px; padding:0 10px 28px; }
     .sidebar-logo .mark{
       width:36px; height:36px; border-radius:11px; flex-shrink:0;
@@ -113,6 +147,8 @@
 
     .app-shell{ max-width:1400px; margin:0 auto; }
     .phone{ max-width:none; }
+    body:not(.authed) .phone{ max-width:480px; margin:60px auto; min-height:auto; }
+    body:not(.authed) .app-shell{ display:block; }
     .tabbar{ display:none; }
     .fab{ position:fixed; right:40px; bottom:40px; width:64px; height:64px; left:auto; transform:none; }
 
@@ -137,7 +173,9 @@
   .stat-card.c-done .v{ color:var(--green); }
   .stat-card.c-cancelled .v{ color:var(--red); }
   .screen{ display:none; flex-direction:column; flex:1; min-height:100vh; }
-  .screen.active{ display:flex; }
+  .screen.active{ display:flex; animation: screenFade .28s ease both; }
+  @keyframes screenFade{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+  .today-card, .stats-grid .stat-card{ animation: rise .4s cubic-bezier(.2,.8,.3,1) both; }
 
   /* ---------- Auth screens ---------- */
   .auth-wrap{
@@ -254,10 +292,17 @@
     padding:16px 18px;
     margin-bottom:12px;
     box-shadow:0 8px 20px rgba(0,0,0,0.25);
-    animation: rise .32s ease both;
+    animation: rise .38s cubic-bezier(.2,.8,.3,1) both;
     display:flex; gap:14px;
+    transition:transform .15s ease, box-shadow .15s ease;
   }
-  @keyframes rise{ from{opacity:0; transform:translateY(8px);} to{opacity:1; transform:translateY(0);} }
+  .task-card:hover{ transform:translateY(-2px); box-shadow:0 12px 26px rgba(0,0,0,0.3); }
+  .task-card.overdue{
+    border-color:rgba(255,95,109,0.4);
+    box-shadow:0 8px 20px rgba(255,95,109,0.12);
+  }
+  .task-card.overdue .task-title{ color:var(--red); }
+  @keyframes rise{ from{opacity:0; transform:translateY(14px) scale(0.98);} to{opacity:1; transform:translateY(0) scale(1);} }
   .task-icon{
     width:42px; height:42px; border-radius:13px; flex-shrink:0;
     display:flex; align-items:center; justify-content:center;
@@ -399,6 +444,10 @@
       <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.6 7.6 0 001.7 1l.4 2.5h4l.4-2.5a7.6 7.6 0 001.7-1l2.3.9 2-3.4-2-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
       Sozlamalar
     </button>
+    <button class="side-item admin-nav" data-tab="admin" onclick="openAdmin()" style="display:none;">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 3l7 3v6c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6l7-3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+      Admin
+    </button>
   </div>
   <div class="side-foot">
     <div class="side-profile">
@@ -535,6 +584,22 @@
           <span>Telegram bot orqali eslatish</span>
           <span class="chev" id="settings-telegram-state">Ulash ›</span>
         </div>
+        <div class="settings-row" onclick="togglePush()">
+          <span>Push xabarnomalar (brauzerda)</span>
+          <span class="chev" id="settings-push-state">Yoqish ›</span>
+        </div>
+        <div class="settings-row" onclick="toggleTheme()">
+          <span>Mavzu</span>
+          <span class="chev" id="settings-theme-state">Qorong'i ›</span>
+        </div>
+      </div>
+
+      <div class="section-label">Boshqaruv</div>
+      <div class="settings-group admin-nav" style="display:none; margin-bottom:20px;">
+        <div class="settings-row" onclick="openAdmin()">
+          <span>Admin panel</span>
+          <span class="chev">›</span>
+        </div>
       </div>
 
       <div class="section-label">Hisob</div>
@@ -550,6 +615,27 @@
         Vazifalar
       </button>
       <button class="tab active" data-tab="settings" onclick="switchTab('settings')">
+        <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.6 7.6 0 001.7 1l.4 2.5h4l.4-2.5a7.6 7.6 0 001.7-1l2.3.9 2-3.4-2-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+        Sozlamalar
+      </button>
+    </div>
+  </div>
+
+  <!-- MAIN: ADMIN -->
+  <div class="screen" id="screen-admin">
+    <div class="topbar">
+      <div><h1>Admin panel</h1><div class="date">Foydalanuvchilarni boshqarish</div></div>
+    </div>
+    <div class="settings-wrap">
+      <div class="section-label">Foydalanuvchilar</div>
+      <div id="admin-user-list"></div>
+    </div>
+    <div class="tabbar">
+      <button class="tab" data-tab="main" onclick="switchTab('main')">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4.5-4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" stroke-width="2"/></svg>
+        Vazifalar
+      </button>
+      <button class="tab" data-tab="settings" onclick="switchTab('settings')">
         <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.6 7.6 0 001.7 1l.4 2.5h4l.4-2.5a7.6 7.6 0 001.7-1l2.3.9 2-3.4-2-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
         Sozlamalar
       </button>
@@ -632,15 +718,15 @@ async function apiCall(action, payload){
 
 /* ---------------- Local (device) session helpers ---------------- */
 async function storeGet(key){
-  try{ const r = await window.storage.get(key, false); return r ? r.value : null; }
+  try{ const v = localStorage.getItem(key); return v; }
   catch(e){ return null; }
 }
 async function storeSet(key, value){
-  try{ await window.storage.set(key, value, false); return true; }
+  try{ localStorage.setItem(key, value); return true; }
   catch(e){ return false; }
 }
 async function storeDelete(key){
-  try{ await window.storage.delete(key, false); return true; }
+  try{ localStorage.removeItem(key); return true; }
   catch(e){ return false; }
 }
 
@@ -660,6 +746,8 @@ const RECUR_LABEL = { none:'', weekly:'\uD83D\uDD01 Har hafta', monthly:'\uD83D\
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  const isAuthScreen = (id === 'screen-setup' || id === 'screen-login');
+  document.body.classList.toggle('authed', !isAuthScreen);
 }
 function toast(msg){
   const t = document.getElementById('toast');
@@ -691,7 +779,7 @@ async function boot(){
       if(res.ok){
         document.getElementById('login-login').value = s.login;
         document.getElementById('login-pass').value = s.password;
-        await enterApp(s.login, res.hasTelegram);
+        await enterApp(s.login, res.hasTelegram, res.isAdmin);
         return;
       }
     }catch(e){}
@@ -740,7 +828,7 @@ async function doLogin(){
     await storeDelete('auth:session');
   }
   await apiCall('setRemember', {login, remembered:REMEMBER_CHECKED});
-  await enterApp(login, res.hasTelegram);
+  await enterApp(login, res.hasTelegram, res.isAdmin);
 }
 
 function toggleRemember(){
@@ -756,13 +844,17 @@ async function doLogout(){
 }
 
 /* ---------------- App entry ---------------- */
-async function enterApp(login, hasTelegram){
+async function enterApp(login, hasTelegram, isAdmin){
   CURRENT_USER = login;
+  IS_ADMIN = !!isAdmin;
   document.getElementById('profile-name').textContent = login;
   document.getElementById('avatar-letter').textContent = login.charAt(0).toUpperCase();
   document.getElementById('side-profile-name').textContent = login;
   document.getElementById('side-avatar-letter').textContent = login.charAt(0).toUpperCase();
   updateTelegramState(hasTelegram);
+  updateThemeLabel();
+  initPush();
+  maybeShowAdminNav();
   await loadTasks();
   renderTasks();
   showScreen('screen-main');
@@ -773,6 +865,7 @@ function switchTab(tab){
   document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   document.querySelectorAll('.side-item').forEach(b=>b.classList.toggle('active', b.dataset.tab===tab));
   if(tab==='main'){ showScreen('screen-main'); }
+  else if(tab==='admin'){ showScreen('screen-admin'); }
   else { showScreen('screen-settings'); refreshRememberSetting(); }
 }
 
@@ -924,8 +1017,9 @@ document.getElementById('filters').addEventListener('click', (e)=>{
   renderTasks();
 });
 
-function taskCardHtml(t){
+function taskCardHtml(t, idx){
   const badgeClass = 'badge-'+t.status;
+  const overdue = isOverdue(t);
   let actions = '';
   if(t.status==='pending'){
     actions = `<div class="task-actions">
@@ -945,14 +1039,16 @@ function taskCardHtml(t){
   const titleClass = t.status==='done' ? 'task-title done' : 'task-title';
   const timeChip = t.time ? `<span style="margin-left:8px;">\u23F0 ${t.time}</span>` : '';
   const recurChip = (t.recurring && t.recurring!=='none') ? `<span style="margin-left:8px;">${RECUR_LABEL[t.recurring]}</span>` : '';
+  const overdueChip = overdue ? `<span style="margin-left:8px; color:var(--red); font-weight:700;">\u26A0 muddati o'tgan</span>` : '';
   const ICONS = {
     pending: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
     progress: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
     done: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M6 12.5l4 4 8-9" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>',
     cancelled: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M7 7l10 10M17 7L7 17" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>'
   };
-  return `<div class="task-card">
-    <div class="task-icon i-${t.status}">${ICONS[t.status]}</div>
+  const delay = Math.min(idx||0, 10) * 0.04;
+  return `<div class="task-card${overdue ? ' overdue' : ''}" style="animation-delay:${delay}s;">
+    <div class="task-icon i-${overdue ? 'cancelled' : t.status}">${ICONS[overdue ? 'pending' : t.status]}</div>
     <div class="task-body">
       <div class="task-head">
         <div class="${titleClass}">${escapeHtml(t.title)}</div>
@@ -961,7 +1057,7 @@ function taskCardHtml(t){
       ${t.desc ? `<div class="task-desc">${escapeHtml(t.desc)}</div>` : ''}
       <div class="task-meta">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="3" stroke="currentColor" stroke-width="2"/><path d="M8 3v4M16 3v4M3 10h18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-        ${fmtDate(t.date)}${timeChip}${recurChip}
+        ${fmtDate(t.date)}${timeChip}${recurChip}${overdueChip}
       </div>
       ${actions}
     </div>
@@ -977,13 +1073,19 @@ function renderTasks(){
   if(ACTIVE_FILTER !== 'all'){
     filtered = TASKS.filter(t=>t.status===ACTIVE_FILTER);
   }
+  filtered = filtered.slice().sort((a,b)=>{
+    const ao = isOverdue(a) ? 0 : 1;
+    const bo = isOverdue(b) ? 0 : 1;
+    if(ao !== bo) return ao - bo;
+    return a.date.localeCompare(b.date);
+  });
   if(filtered.length===0){
     list.innerHTML = `<div class="empty">
       <div class="icon"><svg width="46" height="46" viewBox="0 0 24 24" fill="none"><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="#8E8E93" stroke-width="1.6"/><path d="M9 12.5l2 2 4.5-4.5" stroke="#8E8E93" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
       <p>Bu bo'limda vazifalar yo'q</p>
     </div>`;
   } else {
-    list.innerHTML = filtered.map(taskCardHtml).join('');
+    list.innerHTML = filtered.map((t,i)=>taskCardHtml(t,i)).join('');
   }
 
   document.getElementById('stat-pending').textContent = TASKS.filter(t=>t.status==='pending').length;
@@ -1008,6 +1110,137 @@ function renderTasks(){
   }
 }
 
+/* ---------------- Theme ---------------- */
+function applySavedTheme(){
+  const saved = localStorage.getItem('theme');
+  if(saved === 'light'){ document.body.classList.add('theme-light'); }
+  updateThemeLabel();
+}
+function toggleTheme(){
+  document.body.classList.toggle('theme-light');
+  localStorage.setItem('theme', document.body.classList.contains('theme-light') ? 'light' : 'dark');
+  updateThemeLabel();
+}
+function updateThemeLabel(){
+  const el = document.getElementById('settings-theme-state');
+  if(!el) return;
+  el.textContent = document.body.classList.contains('theme-light') ? "Yorug' \u203a" : "Qorong'i \u203a";
+}
+
+/* ---------------- Push notifications (browser, while tab is open) ---------------- */
+let PUSH_ENABLED = false;
+let NOTIFIED_IDS = new Set();
+function initPush(){
+  PUSH_ENABLED = localStorage.getItem('pushEnabled') === '1' && Notification && Notification.permission === 'granted';
+  updatePushLabel();
+  if(PUSH_ENABLED){ startPushLoop(); }
+}
+function updatePushLabel(){
+  const el = document.getElementById('settings-push-state');
+  if(!el) return;
+  el.textContent = PUSH_ENABLED ? 'Yoqilgan \u203a' : 'Yoqish \u203a';
+}
+async function togglePush(){
+  if(PUSH_ENABLED){
+    PUSH_ENABLED = false;
+    localStorage.setItem('pushEnabled', '0');
+    updatePushLabel();
+    toast("Push xabarnomalar o'chirildi");
+    return;
+  }
+  if(!('Notification' in window)){
+    toast('Brauzeringiz push xabarnomalarni qo\'llamaydi');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  if(perm !== 'granted'){
+    toast('Ruxsat berilmadi');
+    return;
+  }
+  PUSH_ENABLED = true;
+  localStorage.setItem('pushEnabled', '1');
+  updatePushLabel();
+  startPushLoop();
+  toast('Push xabarnomalar yoqildi');
+}
+function startPushLoop(){
+  checkPushReminders();
+  setInterval(checkPushReminders, 30000);
+}
+function checkPushReminders(){
+  if(!PUSH_ENABLED) return;
+  const today = todayStr();
+  const now = new Date();
+  const nowHM = String(now.getHours()).padStart(2,'0')+':'+String(now.getMinutes()).padStart(2,'0');
+  TASKS.forEach(t=>{
+    if(!t.time) return;
+    if(t.status==='done' || t.status==='cancelled') return;
+    if(t.date !== today) return;
+    if(t.time > nowHM) return;
+    if(NOTIFIED_IDS.has(t.id)) return;
+    NOTIFIED_IDS.add(t.id);
+    try{
+      new Notification('\u23F0 ' + t.title, { body: 'Bajarish vaqti keldi ('+t.time+')' });
+    }catch(e){}
+  });
+}
+
+/* ---------------- Overdue helper ---------------- */
+function isOverdue(t){
+  return (t.status==='pending' || t.status==='progress') && t.date < todayStr();
+}
+
+/* ---------------- Admin panel ---------------- */
+let IS_ADMIN = false;
+async function maybeShowAdminNav(){
+  if(!IS_ADMIN) return;
+  document.querySelectorAll('.admin-nav').forEach(el=>{
+    el.style.display = (el.tagName === 'BUTTON') ? 'flex' : 'block';
+  });
+}
+function openAdmin(){
+  switchTab('admin');
+  loadAdminUsers();
+}
+async function loadAdminUsers(){
+  const res = await apiCall('adminListUsers', {login:CURRENT_USER});
+  const list = document.getElementById('admin-user-list');
+  if(!res.ok){
+    list.innerHTML = `<div class="empty"><p>${escapeHtml(res.error||'Xatolik')}</p></div>`;
+    return;
+  }
+  if(!res.users.length){
+    list.innerHTML = `<div class="empty"><p>Foydalanuvchilar yo'q</p></div>`;
+    return;
+  }
+  list.innerHTML = res.users.map(u => `
+    <div class="settings-row" style="cursor:default;">
+      <span>${escapeHtml(u.login)}${u.isAdmin ? ' \uD83D\uDC51' : ''}</span>
+      <span style="display:flex; gap:8px;">
+        <button class="act-accept" style="padding:6px 12px; border-radius:10px; font-size:12.5px; border:none; cursor:pointer;" onclick="adminEditUser('${u.login}')">Tahrirlash</button>
+        <button class="act-cancel" style="padding:6px 12px; border-radius:10px; font-size:12.5px; border:none; cursor:pointer;" onclick="adminDeleteUserConfirm('${u.login}')">O'chirish</button>
+      </span>
+    </div>
+  `).join('');
+}
+async function adminEditUser(targetLogin){
+  const newPass = prompt('"'+targetLogin+'" uchun yangi parol kiriting (kamida 4 belgi):');
+  if(!newPass) return;
+  if(newPass.length < 4){ toast('Parol kamida 4 belgidan iborat bo\'lsin'); return; }
+  const res = await apiCall('adminUpdateUser', {login:CURRENT_USER, targetLogin, newPassword:newPass});
+  if(!res.ok){ toast(res.error || 'Xatolik'); return; }
+  toast('Parol yangilandi');
+}
+async function adminDeleteUserConfirm(targetLogin){
+  if(targetLogin === CURRENT_USER){ toast("O'zingizni o'chira olmaysiz"); return; }
+  if(!confirm('"'+targetLogin+'" hisobini butunlay o\'chirmoqchimisiz? Bu amalni orqaga qaytarib bo\'lmaydi.')) return;
+  const res = await apiCall('adminDeleteUser', {login:CURRENT_USER, targetLogin});
+  if(!res.ok){ toast(res.error || 'Xatolik'); return; }
+  toast('Foydalanuvchi o\'chirildi');
+  loadAdminUsers();
+}
+
+applySavedTheme();
 boot();
 </script>
 </body>
