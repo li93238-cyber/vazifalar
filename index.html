@@ -767,9 +767,17 @@ function todayStr(){
 }
 function fmtDate(str){
   if(!str) return '';
-  const d = new Date(str+'T00:00:00');
+  const clean = String(str).slice(0,10); // "yyyy-MM-dd" qismini olamiz, qolgan ISO qismini kesib tashlaymiz
+  const d = new Date(clean+'T00:00:00');
+  if(isNaN(d.getTime())) return '';
   const months=['yan','fev','mar','apr','may','iyun','iyul','avg','sen','okt','noy','dek'];
   return d.getDate()+' '+months[d.getMonth()];
+}
+function fmtTime(str){
+  if(!str) return '';
+  const s = String(str);
+  const m = s.match(/(\d{2}):(\d{2})/); // HH:mm qismini topib olamiz, qolganini e'tiborsiz qoldiramiz
+  return m ? (m[1]+':'+m[2]) : '';
 }
 
 /* ---------------- Init / boot ---------------- */
@@ -1055,7 +1063,7 @@ function taskCardHtml(t, idx){
     </div>`;
   }
   const titleClass = t.status==='done' ? 'task-title done' : 'task-title';
-  const timeChip = t.time ? `<span style="margin-left:8px;">\u23F0 ${t.time}</span>` : '';
+  const timeChip = t.time && fmtTime(t.time) ? `<span style="margin-left:8px;">\u23F0 ${fmtTime(t.time)}</span>` : '';
   const recurChip = (t.recurring && t.recurring!=='none') ? `<span style="margin-left:8px;">${RECUR_LABEL[t.recurring]}</span>` : '';
   const overdueChip = overdue ? `<span style="margin-left:8px; color:var(--red); font-weight:700;">\u26A0 muddati o'tgan</span>` : '';
   const assignChip = (t.assignedBy && t.assignedBy !== t.login) ? `<span style="margin-left:8px;">\uD83D\uDC64 ${escapeHtml(t.assignedBy)} tomonidan</span>` : '';
