@@ -26,6 +26,7 @@
     --card:#1A1A1F;
     --card-2:#222228;
     --hairline:rgba(255,255,255,0.08);
+    --today-grad-start:#1F2417;
   }
   body.theme-light{
     --neon:#5EA810;
@@ -45,6 +46,7 @@
     --card:#FFFFFF;
     --card-2:#F3F6F1;
     --hairline:rgba(20,20,20,0.08);
+    --today-grad-start:#EAF6DD;
     background:#F4F7F2;
   }
   body.theme-light .mesh{
@@ -249,12 +251,12 @@
 
   .today-card{
     margin:6px 20px 18px;
-    background:linear-gradient(135deg, #1F2417, var(--card) 55%);
+    background:linear-gradient(135deg, var(--today-grad-start), var(--card) 55%);
     border:1px solid rgba(198,255,61,0.22);
     border-radius:24px;
     padding:18px 20px;
     display:flex; align-items:center; gap:18px;
-    box-shadow:0 10px 30px rgba(0,0,0,0.35);
+    box-shadow:0 10px 30px rgba(0,0,0,0.12);
   }
   .ring-wrap{ position:relative; width:64px; height:64px; flex-shrink:0; }
   .ring-wrap svg{ transform:rotate(-90deg); }
@@ -342,17 +344,17 @@
   .empty p{ margin:0; font-size:14.5px; }
 
   .fab{
-    position:absolute; left:50%; bottom:86px; transform:translateX(-50%);
+    position:fixed; left:50%; bottom:96px; transform:translateX(-50%);
     width:58px; height:58px; border-radius:50%;
     background:var(--neon);
     display:flex; align-items:center; justify-content:center;
     border:none; cursor:pointer;
-    box-shadow:0 0 0 6px #0C0C0E, 0 0 34px var(--neon-glow);
+    box-shadow:0 0 0 6px var(--card), 0 0 34px var(--neon-glow);
     transition:transform .12s ease;
-    z-index:5;
+    z-index:20;
   }
   .fab:active{ transform:translateX(-50%) scale(0.92); }
-  .fab svg path{ stroke:#0C0C0E; }
+  .fab svg path{ stroke:var(--neon-ink); }
 
   .tabbar{
     position:sticky; bottom:0; left:0; right:0;
@@ -747,7 +749,12 @@ const STATUS_LABEL = {
   pending:'Yangi', progress:'Jarayonda', done:'Bajarildi', cancelled:'Bekor qilingan'
 };
 const WEEKDAY_LABELS = ['Yak','Dush','Sesh','Chor','Pay','Juma','Shan'];
-const RECUR_LABEL = { none:'', weekly:'\uD83D\uDD01 Har hafta', monthly:'\uD83D\uDD01 Har oy' };
+const ICON_CLOCK = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2"/><path d="M12 7v5l3.5 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_REPEAT = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;"><path d="M4 12a8 8 0 0113.6-5.7M20 12a8 8 0 01-13.6 5.7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M17 3v4h-4M7 21v-4h4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+const ICON_WARNING = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;"><path d="M12 3l10 18H2L12 3z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 10v4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="17" r="0.9" fill="currentColor"/></svg>';
+const ICON_PERSON = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;"><circle cx="12" cy="8" r="4" stroke="currentColor" stroke-width="2"/><path d="M4 20c1.5-4 5-6 8-6s6.5 2 8 6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>';
+const ICON_CROWN = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" style="vertical-align:-2px;"><path d="M3 8l4 3 5-6 5 6 4-3-2 10H5L3 8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+const RECUR_LABEL = { none:'', weekly:ICON_REPEAT+' Har hafta', monthly:ICON_REPEAT+' Har oy' };
 
 function showScreen(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
@@ -1001,37 +1008,69 @@ async function saveTask(){
   const err = document.getElementById('task-error');
   if(!title){ err.textContent='Vazifa nomini kiriting'; err.classList.add('show'); return; }
 
+  const selfAssigned = !assignTo || assignTo === CURRENT_USER;
+  const tempId = 'temp'+Date.now();
+  if(selfAssigned){
+    TASKS.unshift({
+      id: tempId, login:CURRENT_USER, title, desc, date, time, status:'pending',
+      recurring, recurWeekday:SELECTED_WEEKDAY, recurMonthDay:monthDay, assignedBy:CURRENT_USER
+    });
+    closeTaskModal();
+    renderTasks();
+    toast('Vazifa qo\'shildi');
+  } else {
+    closeTaskModal();
+  }
+
   const res = await apiCall('addTask', {
     login:CURRENT_USER, title, desc, date, time,
     recurring, recurWeekday:SELECTED_WEEKDAY, recurMonthDay:monthDay, assignTo
   });
-  if(!res.ok){ err.textContent = res.error || 'Xatolik'; err.classList.add('show'); return; }
 
-  closeTaskModal();
-  await loadTasks();
-  renderTasks();
-  toast('Vazifa qo\'shildi');
+  if(!res.ok){
+    if(selfAssigned) TASKS = TASKS.filter(x=>x.id!==tempId);
+    renderTasks();
+    toast(res.error || 'Xatolik yuz berdi');
+    return;
+  }
+  if(selfAssigned){
+    const t = TASKS.find(x=>x.id===tempId);
+    if(t) t.id = res.id;
+  } else {
+    toast('Vazifa tayinlandi');
+  }
 }
 
 async function acceptTask(id){
-  await apiCall('updateStatus', {taskId:id, status:'progress'});
-  await loadTasks(); renderTasks();
+  const t = TASKS.find(x=>x.id===id);
+  if(t) t.status = 'progress';
+  renderTasks();
   toast('Vazifa jarayonga o\'tdi');
+  apiCall('updateStatus', {taskId:id, status:'progress'});
 }
 async function completeTask(id){
+  const t = TASKS.find(x=>x.id===id);
+  if(t) t.status = 'done';
+  renderTasks();
+  toast('Vazifa bajarildi');
   const res = await apiCall('updateStatus', {taskId:id, status:'done'});
-  await loadTasks(); renderTasks();
-  toast(res.newTask ? 'Bajarildi! Keyingi davr uchun yangi vazifa yaratildi' : 'Vazifa bajarildi');
+  if(res.newTask){
+    toast('Keyingi davr uchun yangi vazifa yaratildi');
+    await loadTasks(); renderTasks();
+  }
 }
 async function cancelTask(id){
-  await apiCall('updateStatus', {taskId:id, status:'cancelled'});
-  await loadTasks(); renderTasks();
+  const t = TASKS.find(x=>x.id===id);
+  if(t) t.status = 'cancelled';
+  renderTasks();
   toast('Vazifa bekor qilindi');
+  apiCall('updateStatus', {taskId:id, status:'cancelled'});
 }
 async function deleteTask(id){
-  await apiCall('deleteTask', {taskId:id});
-  await loadTasks(); renderTasks();
+  TASKS = TASKS.filter(x=>x.id!==id);
+  renderTasks();
   toast('Vazifa o\'chirildi');
+  apiCall('deleteTask', {taskId:id});
 }
 
 document.getElementById('filters').addEventListener('click', (e)=>{
@@ -1063,10 +1102,10 @@ function taskCardHtml(t, idx){
     </div>`;
   }
   const titleClass = t.status==='done' ? 'task-title done' : 'task-title';
-  const timeChip = t.time && fmtTime(t.time) ? `<span style="margin-left:8px;">\u23F0 ${fmtTime(t.time)}</span>` : '';
+  const timeChip = t.time && fmtTime(t.time) ? `<span style="margin-left:8px;">${ICON_CLOCK} ${fmtTime(t.time)}</span>` : '';
   const recurChip = (t.recurring && t.recurring!=='none') ? `<span style="margin-left:8px;">${RECUR_LABEL[t.recurring]}</span>` : '';
-  const overdueChip = overdue ? `<span style="margin-left:8px; color:var(--red); font-weight:700;">\u26A0 muddati o'tgan</span>` : '';
-  const assignChip = (t.assignedBy && t.assignedBy !== t.login) ? `<span style="margin-left:8px;">\uD83D\uDC64 ${escapeHtml(t.assignedBy)} tomonidan</span>` : '';
+  const overdueChip = overdue ? `<span style="margin-left:8px; color:var(--red); font-weight:700;">${ICON_WARNING} muddati o'tgan</span>` : '';
+  const assignChip = (t.assignedBy && t.assignedBy !== t.login) ? `<span style="margin-left:8px;">${ICON_PERSON} ${escapeHtml(t.assignedBy)} tomonidan</span>` : '';
   const ICONS = {
     pending: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
     progress: '<svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="8" stroke="currentColor" stroke-width="2"/></svg>',
@@ -1207,7 +1246,7 @@ function checkPushReminders(){
     if(NOTIFIED_IDS.has(t.id)) return;
     NOTIFIED_IDS.add(t.id);
     try{
-      new Notification('\u23F0 ' + t.title, { body: 'Bajarish vaqti keldi ('+t.time+')' });
+      new Notification('Eslatma: ' + t.title, { body: 'Bajarish vaqti keldi ('+t.time+')' });
     }catch(e){}
   });
 }
@@ -1242,7 +1281,7 @@ async function loadAdminUsers(){
   }
   list.innerHTML = res.users.map(u => `
     <div class="settings-row" style="cursor:default;">
-      <span>${escapeHtml(u.login)}${u.isAdmin ? ' \uD83D\uDC51' : ''}</span>
+      <span>${escapeHtml(u.login)}${u.isAdmin ? ' '+ICON_CROWN : ''}</span>
       <span style="display:flex; gap:8px;">
         <button class="act-accept" style="padding:6px 12px; border-radius:10px; font-size:12.5px; border:none; cursor:pointer;" onclick="adminEditUser('${u.login}')">Tahrirlash</button>
         <button class="act-cancel" style="padding:6px 12px; border-radius:10px; font-size:12.5px; border:none; cursor:pointer;" onclick="adminDeleteUserConfirm('${u.login}')">O'chirish</button>
