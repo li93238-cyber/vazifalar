@@ -152,7 +152,7 @@
     body:not(.authed) .phone{ max-width:480px; margin:60px auto; min-height:auto; }
     body:not(.authed) .app-shell{ display:block; }
     .tabbar{ display:none; }
-    .fab{ position:fixed; right:40px; bottom:40px; width:64px; height:64px; left:auto; transform:none; }
+    .fab-desktop{ display:flex; position:fixed; right:40px; bottom:40px; width:64px; height:64px; }
 
     .topbar{ padding:36px 40px 8px; }
     .topbar h1{ font-size:32px; }
@@ -344,17 +344,22 @@
   .empty p{ margin:0; font-size:14.5px; }
 
   .fab{
-    position:fixed; left:50%; bottom:96px; transform:translateX(-50%);
     width:58px; height:58px; border-radius:50%;
     background:var(--neon);
     display:flex; align-items:center; justify-content:center;
     border:none; cursor:pointer;
     box-shadow:0 0 0 6px var(--card), 0 0 34px var(--neon-glow);
     transition:transform .12s ease;
-    z-index:20;
   }
-  .fab:active{ transform:translateX(-50%) scale(0.92); }
+  .fab:active{ transform:scale(0.92); }
   .fab svg path{ stroke:var(--neon-ink); }
+  .fab-desktop{ display:none; }
+  .fab-inline{
+    flex:0 0 auto;
+    margin:0 6px;
+    margin-top:-30px;
+  }
+  .fab-inline:active{ transform:scale(0.92); }
 
   .tabbar{
     position:sticky; bottom:0; left:0; right:0;
@@ -544,7 +549,7 @@
 
     <div class="task-list" id="task-list"></div>
 
-    <button class="fab" onclick="openTaskModal()">
+    <button class="fab fab-desktop" onclick="openTaskModal()">
       <svg width="26" height="26" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
     </button>
 
@@ -552,6 +557,9 @@
       <button class="tab active" data-tab="main" onclick="switchTab('main')">
         <svg viewBox="0 0 24 24" fill="none"><path d="M9 12.5l2 2 4.5-4.5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/><rect x="3.5" y="3.5" width="17" height="17" rx="5" stroke="currentColor" stroke-width="2"/></svg>
         Vazifalar
+      </button>
+      <button class="fab fab-inline" onclick="openTaskModal()">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M12 5v14M5 12h14" stroke="#fff" stroke-width="2.4" stroke-linecap="round"/></svg>
       </button>
       <button class="tab" data-tab="settings" onclick="switchTab('settings')">
         <svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 13a7.6 7.6 0 000-2l2-1.5-2-3.4-2.3.9a7.6 7.6 0 00-1.7-1L15 3.5h-4l-.4 2.5a7.6 7.6 0 00-1.7 1l-2.3-.9-2 3.4L6.6 11a7.6 7.6 0 000 2l-2 1.5 2 3.4 2.3-.9a7.6 7.6 0 001.7 1l.4 2.5h4l.4-2.5a7.6 7.6 0 001.7-1l2.3.9 2-3.4-2-1.5z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
